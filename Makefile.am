@@ -352,6 +352,24 @@ src_tss2_tcti_libtss2_tcti_pcap_la_SOURCES  = \
     src/tss2-tcti/tcti-pcap.c
 endif # ENABLE_TCTI_PCAP
 
+# tcti libtpms library
+if ENABLE_TCTI_LIBTPMS
+libtss2_tcti_libtpms = src/tss2-tcti/libtss2-tcti-libtpms.la
+tss2_HEADERS += $(srcdir)/include/tss2/tss2_tcti_libtpms.h
+lib_LTLIBRARIES += $(libtss2_tcti_libtpms)
+pkgconfig_DATA += lib/tss2-tcti-libtpms.pc
+EXTRA_DIST += lib/tss2-tcti-libtpms.map
+
+if HAVE_LD_VERSION_SCRIPT
+src_tss2_tcti_libtss2_tcti_libtpms_la_LDFLAGS  = -Wl,--version-script=$(srcdir)/lib/tss2-tcti-libtpms.map
+endif # HAVE_LD_VERSION_SCRIPT
+src_tss2_tcti_libtss2_tcti_libtpms_la_LIBADD   = $(libtss2_tctildr) $(libutil)
+src_tss2_tcti_libtss2_tcti_libtpms_la_SOURCES  = \
+    src/tss2-tcti/tcti-common.c \
+    src/tss2-tcti/tcti-libtpms.c \
+    src/tss2-tcti/tcti-libtpms.h
+endif # ENABLE_TCTI_LIBTPMS
+
 # tcti library for sub-process commands
 if ENABLE_TCTI_CMD
 libtss2_tcti_cmd = src/tss2-tcti/libtss2-tcti-cmd.la

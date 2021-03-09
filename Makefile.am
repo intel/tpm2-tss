@@ -340,7 +340,7 @@ libtss2_tcti_pcap = src/tss2-tcti/libtss2-tcti-pcap.la
 tss2_HEADERS += $(srcdir)/include/tss2/tss2_tcti_pcap.h
 lib_LTLIBRARIES += $(libtss2_tcti_pcap)
 pkgconfig_DATA += lib/tss2-tcti-pcap.pc
-EXTRA_DIST += lib/tss2-tcti-pcap.map # joho TODO enable tcti-pcap for Win (.def, visual studio files
+EXTRA_DIST += lib/tss2-tcti-pcap.map
 
 if HAVE_LD_VERSION_SCRIPT
 src_tss2_tcti_libtss2_tcti_pcap_la_LDFLAGS  = -Wl,--version-script=$(srcdir)/lib/tss2-tcti-pcap.map

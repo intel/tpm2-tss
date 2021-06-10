@@ -23,5 +23,5 @@ task:
     - rm -fr $ibmtpm_name $ibmtpm_name.tar.gz
   script:
     ./bootstrap &&
-    ./configure --enable-self-generated-certificate --enable-unit=yes --enable-integration=yes --with-crypto=ossl --disable-doxygen-doc --enable-tcti-swtpm=no --enable-tcti-mssim=yes --disable-dependency-tracking &&
+    ./configure --enable-self-generated-certificate --enable-unit=yes --enable-integration=yes --with-crypto=ossl --disable-doxygen-doc --enable-tcti-swtpm=no --enable-tcti-libtpms=no --enable-tcti-mssim=yes --disable-dependency-tracking &&
     gmake -j distcheck || { cat /tmp/cirrus-ci-build/tpm2-tss-*/_build/sub/test-suite.log; exit 1; }

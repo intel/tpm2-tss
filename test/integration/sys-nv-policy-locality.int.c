@@ -217,6 +217,9 @@ nv_write_test (TSS2_SYS_CONTEXT *sys_ctx)
     {
         LOG_INFO ("%s: writing NV from locality %" PRIu8, __func__, locality);
         rc = Tss2_Tcti_SetLocality (tcti_ctx, locality);
+        if (rc == TSS2_TCTI_RC_NOT_IMPLEMENTED) {
+            return 77;
+        }
         return_if_error (rc, "Tss2_Tcti_SetLocality");
 
         rc = nv_write (sys_ctx);

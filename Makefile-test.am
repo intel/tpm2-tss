@@ -105,6 +105,9 @@ endif
 if ENABLE_TCTI_SWTPM
 TESTS_UNIT += test/unit/tcti-swtpm
 endif
+if ENABLE_TCTI_LIBTPMS
+TESTS_UNIT += test/unit/tcti-libtpms
+endif
 if ENABLE_TCTI_DEVICE
 TESTS_UNIT += test/unit/tcti-device
 endif
@@ -420,6 +423,17 @@ test_unit_tcti_swtpm_LDFLAGS = -Wl,--wrap=connect,--wrap=read,--wrap=select,--wr
 test_unit_tcti_swtpm_SOURCES = test/unit/tcti-swtpm.c \
     src/tss2-tcti/tcti-common.c \
     src/tss2-tcti/tcti-swtpm.c src/tss2-tcti/tcti-swtpm.h
+endif
+
+if ENABLE_TCTI_LIBTPMS
+test_unit_tcti_libtpms_CFLAGS  = $(CMOCKA_CFLAGS) $(TESTS_CFLAGS)
+test_unit_tcti_libtpms_LDADD   = $(CMOCKA_LIBS) $(libtss2_mu) $(libutil) $(LIBADD_DL)
+test_unit_tcti_libtpms_LDFLAGS = -Wl,--wrap=dlopen,--wrap=dlclose,--wrap=dlsym \
+    -Wl,--wrap=open,--wrap=close,--wrap=mmap,--wrap=mremap,--wrap=munmap \
+    -Wl,--wrap=lseek,--wrap=posix_fallocate,--wrap=truncate
+test_unit_tcti_libtpms_SOURCES = test/unit/tcti-libtpms.c \
+    src/tss2-tcti/tcti-common.c \
+    src/tss2-tcti/tcti-libtpms.c src/tss2-tcti/tcti-libtpms.h
 endif
 
 if ENABLE_TCTI_PCAP

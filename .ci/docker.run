@@ -83,8 +83,6 @@ else
   make -j check
 fi
 
-popd
-
 else # TEST_TCTI_CONFIG == true
 mkdir ./config_test
 pushd ./config_test
@@ -121,8 +119,32 @@ if [ "$CC" == "gcc" ]; then
   ../configure --disable-doxygen-doc --enable-unit --enable-self-generated-certificate --enable-integration --enable-tcti-swtpm --enable-tcti-mssim --enable-tcti-device
   make -j check TESTS="test/unit/tcti-swtpm test/unit/tcti-mssim test/unit/tcti-device"
 fi # CC == gcc
-popd
 fi # TEST_TCTI_CONFIG
+
+# Test that we don't break the tools by:
+#  - running install before leaving the build variant directory
+#  - returning to the top level tpm2-tss folder and git cloning:
+#      - tpm2-abrmd
+#      - tpm2-tools
+#  - Building all projects
+#  - Runing the tools test suite
+make install
+popd
+
+git clone --depth=1 https://github.com/tpm2-software/tpm2-abrmd.git
+pushd tpm2-abrmd
+./bootstrap
+./configure CFLAGS=-g
+make -j$(nproc)
+make install
+popd
+
+git clone --depth=1 https://github.com/tpm2-software/tpm2-tools.git
+pushd tpm2-tools
+./bootstrap
+./configure --enable-unit --enable-integration
+make -j$(nproc) check
+popd
 
 # back in root git directory, check for whitespace errors. We do this post CI
 # so people can verify the rest of their patch works in CI before dying.

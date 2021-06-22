@@ -1389,6 +1389,34 @@ struct TPMS_SYMCIPHER_PARMS {
     TPMT_SYM_DEF_OBJECT sym;   /* a symmetric block cipher */
 };
 
+/* Definition of TPM2B_LABEL Structure */
+typedef struct TPM2B_LABEL TPM2B_LABEL;
+struct TPM2B_LABEL {
+    UINT16 size;
+    BYTE buffer[TPM2_LABEL_MAX_BUFFER];
+};
+
+/* Definition of TPMS_DERIVE Structure */
+typedef struct TPMS_DERIVE TPMS_DERIVE;
+struct TPMS_DERIVE {
+    TPM2B_LABEL label;
+    TPM2B_LABEL context;
+};
+
+/* Definition of TPM2B_DERIVE Structure */
+typedef struct TPM2B_DERIVE TPM2B_DERIVE;
+struct TPM2B_DERIVE {
+    UINT16 size;
+    BYTE buffer[sizeof(TPMS_DERIVE)];
+};
+
+/* Definition of TPMU_SENSITIVE_CREATE Union */
+typedef struct TPMU_SENSITIVE_CREATE TPMU_SENSITIVE_CREATE;
+struct TPMU_SENSITIVE_CREATE {
+    BYTE create[TPM2_MAX_SYM_DATA];
+    TPMS_DERIVE derive;
+};
+
 /* Definition of TPM2B_SENSITIVE_DATA Structure */
 typedef struct TPM2B_SENSITIVE_DATA TPM2B_SENSITIVE_DATA;
 struct TPM2B_SENSITIVE_DATA {
@@ -1694,7 +1722,11 @@ union TPMU_PUBLIC_ID {
     TPM2B_DIGEST sym;
     TPM2B_PUBLIC_KEY_RSA rsa;
     TPMS_ECC_POINT ecc;
+    TPMS_DERIVE derive;
 };
+
+/* Definition of TPMU_PUBLIC_ID_DERIVE Union <INOUT S> */
+typedef union TPMU_PUBLIC_ID TPMU_PUBLIC_ID_DERIVE;
 
 /* Definition of TPMS_KEYEDHASH_PARMS Structure */
 typedef struct TPMS_KEYEDHASH_PARMS TPMS_KEYEDHASH_PARMS;
@@ -1754,6 +1786,9 @@ struct TPMT_PUBLIC {
     TPMU_PUBLIC_PARMS parameters; /* the algorithm or structure details */
     TPMU_PUBLIC_ID unique;        /* the unique identifier of the structure. For an asymmetric key this would be the public key. */
 };
+
+/* Definition of TPMT_PUBLIC_DERIVE Structure */
+typedef struct TPMT_PUBLIC TPMT_PUBLIC_DERIVE;
 
 /* Definition of TPM2B_PUBLIC Structure */
 typedef struct TPM2B_PUBLIC TPM2B_PUBLIC;

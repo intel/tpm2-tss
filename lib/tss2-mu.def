@@ -264,6 +264,8 @@ EXPORTS
     Tss2_MU_TPMT_SENSITIVE_Unmarshal
     Tss2_MU_TPMT_PUBLIC_Marshal
     Tss2_MU_TPMT_PUBLIC_Unmarshal
+    Tss2_MU_TPMT_PUBLIC_DERIVE_Marshal
+    Tss2_MU_TPMT_PUBLIC_DERIVE_Unmarshal
     Tss2_MU_TPMT_PUBLIC_PARMS_Marshal
     Tss2_MU_TPMT_PUBLIC_PARMS_Unmarshal
     Tss2_MU_TPMT_TK_CREATION_Marshal

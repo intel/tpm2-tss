@@ -365,6 +365,7 @@
         Esys_Initialize;
         Esys_GetPollHandles;
         Esys_Finalize;
+        Esys_SetLogHandler;
     local:
         *;
 };

@@ -362,3 +362,4 @@ EXPORTS
     Esys_ZGen_2Phase
     Esys_ZGen_2Phase_Async
     Esys_ZGen_2Phase_Finish
+    Esys_SetLogHandler

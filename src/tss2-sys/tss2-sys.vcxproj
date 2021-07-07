@@ -149,6 +149,7 @@
     <ClCompile Include="api\Tss2_Sys_RSA_Decrypt.c" />
     <ClCompile Include="api\Tss2_Sys_RSA_Encrypt.c" />
     <ClCompile Include="api\Tss2_Sys_SelfTest.c" />
+    <ClCompile Include="api/Tss2_Sys_SetLogHandler.c" />
     <ClCompile Include="api\Tss2_Sys_SequenceComplete.c" />
     <ClCompile Include="api\Tss2_Sys_SequenceUpdate.c" />
     <ClCompile Include="api\Tss2_Sys_SetAlgorithmSet.c" />

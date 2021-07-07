@@ -3302,6 +3302,10 @@ Esys_GetSysContext(
     ESYS_CONTEXT *esys_context,
     TSS2_SYS_CONTEXT **sys_context);
 
+TSS2_LOG_HANDLER
+Esys_SetLogHandler(
+    TSS2_LOG_HANDLER new_handler);
+
 #ifdef __cplusplus
 }
 #endif

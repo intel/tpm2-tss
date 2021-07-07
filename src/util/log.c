@@ -106,6 +106,28 @@ getLogFile(void)
 #endif
 }
 
+static void do_default_log(log_level loglevel, const char *module,
+        const char *file, const char *func, int line,
+        const char *msg) {
+
+    char buf[4096];
+    int size = snprintf(buf, sizeof(buf), "%s:%s:%s:%d:%s() %s \n",
+                log_strings[loglevel], module, file, line, func, msg);
+
+    FILE *logfile = getLogFile();
+    fwrite (buf, size, 1, logfile);
+    fflush(logfile);
+}
+
+static TSS2_LOG_HANDLER log_handler = do_default_log;
+
+TSS2_LOG_HANDLER set_log_handler(TSS2_LOG_HANDLER new_handler) {
+    TSS2_LOG_HANDLER old = log_handler;
+    log_handler = new_handler;
+    return old;
+}
+
+/* TODO update logblob */
 void
 doLogBlob(log_level loglevel, const char *module, log_level logdefault,
            log_level *status,
@@ -188,27 +210,27 @@ doLog(log_level loglevel, const char *module, log_level logdefault,
            const char *file, const char *func, int line,
            const char *msg, ...)
 {
-    FILE *logfile;
-    if (unlikely(*status == LOGLEVEL_UNDEFINED))
-        *status = getLogLevel(module, logdefault);
-
-    if (loglevel > *status)
+    /* No log handler, skip message */
+    if (!log_handler) {
         return;
+    /* If the default is registered, short circuit if loglevel is not high enough */
+    } else if (log_handler == do_default_log) {
+        if (unlikely(*status == LOGLEVEL_UNDEFINED))
+            *status = getLogLevel(module, logdefault);
 
-    int size = snprintf(NULL, 0, "%s:%s:%s:%d:%s() %s \n",
-                log_strings[loglevel], module, file, line, func, msg);
-    char fmt[size+1];
-    snprintf(fmt, sizeof(fmt), "%s:%s:%s:%d:%s() %s \n",
-                log_strings[loglevel], module, file, line, func, msg);
+        if (loglevel > *status)
+            return;
+    }
+
+    /* Either the message needs to be logged or needs to defer to registered handler */
+    char usermsgbuf[1024];
 
     va_list vaargs;
     va_start(vaargs, msg);
-    logfile = getLogFile();
-    vfprintf (logfile, fmt,
-        /* log_strings[loglevel], module, file, func, line, */
-        vaargs);
-    fflush(logfile);
+    vsnprintf(usermsgbuf, sizeof(usermsgbuf), msg, vaargs);
     va_end(vaargs);
+
+    log_handler(loglevel, module, file, func, line, usermsgbuf);
 }
 
 static log_level

@@ -39,6 +39,31 @@ struct TSS2_ABI_VERSION {
 
 #define TSS2_ABI_VERSION_CURRENT {1, 2, 1, 108}
 
+/* TODO: Maybe this is better in tss2_log.h? */
+#include <stddef.h>
+#define LOGL_NONE    0
+#define LOGL_ERROR   2
+#define LOGL_WARNING 3
+#define LOGL_INFO    4
+#define LOGL_DEBUG   5
+#define LOGL_TRACE   6
+#define LOGL_UNDEF   0xFF
+
+typedef enum {
+    LOGLEVEL_NONE      = LOGL_NONE,
+    LOGLEVEL_ERROR     = LOGL_ERROR,
+    LOGLEVEL_WARNING   = LOGL_WARNING,
+    LOGLEVEL_INFO      = LOGL_INFO,
+    LOGLEVEL_DEBUG     = LOGL_DEBUG,
+    LOGLEVEL_TRACE     = LOGL_TRACE,
+    LOGLEVEL_UNDEFINED = LOGL_UNDEF
+} log_level;
+
+/* TODO ENUMs can change size based on compiler settings, so just use int or unisgned here */
+typedef void (*TSS2_LOG_HANDLER)(log_level loglevel, const char *module,
+                   const char *file, const char *func, int line,
+                   const char *msg);
+
 /*
  * Return Codes
  */

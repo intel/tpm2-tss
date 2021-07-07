@@ -366,3 +366,4 @@ EXPORTS
     Tss2_Sys_ZGen_2Phase_Prepare
     Tss2_Sys_ZGen_2Phase_Complete
     Tss2_Sys_ZGen_2Phase
+    Tss2_Sys_SetLogHandler

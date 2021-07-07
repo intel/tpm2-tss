@@ -2281,6 +2281,10 @@ TSS2_RC Tss2_Sys_PolicyAuthorizeNV(
     TSS2L_SYS_AUTH_COMMAND const *cmdAuthsArray,
     TSS2L_SYS_AUTH_RESPONSE *rspAuthsArray);
 
+TSS2_LOG_HANDLER
+Tss2_Sys_SetLogHandler(
+    TSS2_LOG_HANDLER new_handler);
+
 #ifdef __cplusplus
 }
 #endif

@@ -222,6 +222,7 @@
     <ClCompile Include="api\Esys_SequenceUpdate.c" />
     <ClCompile Include="api\Esys_SetAlgorithmSet.c" />
     <ClCompile Include="api\Esys_SetCommandCodeAuditStatus.c" />
+    <ClCompile Include="api/Esys_SetLogHandler.c" />
     <ClCompile Include="api\Esys_SetPrimaryPolicy.c" />
     <ClCompile Include="api\Esys_Shutdown.c" />
     <ClCompile Include="api\Esys_Sign.c" />

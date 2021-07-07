@@ -13,24 +13,6 @@
 #define LOGDEFAULT LOGLEVEL_WARNING
 #endif
 
-#define LOGL_NONE    0
-#define LOGL_ERROR   2
-#define LOGL_WARNING 3
-#define LOGL_INFO    4
-#define LOGL_DEBUG   5
-#define LOGL_TRACE   6
-#define LOGL_UNDEF   0xFF
-
-typedef enum {
-    LOGLEVEL_NONE      = LOGL_NONE,
-    LOGLEVEL_ERROR     = LOGL_ERROR,
-    LOGLEVEL_WARNING   = LOGL_WARNING,
-    LOGLEVEL_INFO      = LOGL_INFO,
-    LOGLEVEL_DEBUG     = LOGL_DEBUG,
-    LOGLEVEL_TRACE     = LOGL_TRACE,
-    LOGLEVEL_UNDEFINED = LOGL_UNDEF
-} log_level;
-
 static const char *log_strings[] COMPILER_ATTR(unused) = {
     "none",
     "(unused)",
@@ -145,6 +127,8 @@ static log_level LOGMODULE_status COMPILER_ATTR(unused) = LOGLEVEL_UNDEFINED;
 #define LOG_TRACE(FORMAT, ...) {}
 #define LOGBLOB_TRACE(FORMAT, ...) {}
 #endif
+
+TSS2_LOG_HANDLER set_log_handler(TSS2_LOG_HANDLER new_handler);
 
 void
 doLog(log_level loglevel, const char *module, log_level logdefault,

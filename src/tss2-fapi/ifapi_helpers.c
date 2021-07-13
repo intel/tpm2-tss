@@ -2447,6 +2447,13 @@ ifapi_get_curl_buffer(unsigned char * url, unsigned char ** buffer,
         goto out_easy_cleanup;
     }
 
+    rc = curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+    if (rc != CURLE_OK) {
+        LOG_ERROR("curl_easy_setopt for CURLOPT_FOLLOWLOCATION failed: %s",
+                  curl_easy_strerror(rc));
+        goto out_easy_cleanup;
+    }
+
     if (LOGMODULE_status == LOGLEVEL_TRACE) {
         if (CURLE_OK != curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L)) {
             LOG_WARNING("Curl easy setopt verbose failed");

@@ -219,6 +219,14 @@ EXTRA_DIST += \
     src/tss2-tcti/tss2-tcti-tbs.vcxproj.filters \
     tpm2-tss.sln
 
+# tss2-dlopen wrappers
+EXTRA_DIST += \
+    tss2-dlopen/tss2-dlopen-rc.c \
+    tss2-dlopen/tss2-dlopen-tctildr.c \
+    tss2-dlopen/tss2-dlopen-mu.c \
+    tss2-dlopen/tss2-dlopen-esys.c \
+    tss2-dlopen/tss2-dlopen-fapi.c
+
 # Generate the AUTHORS file from git log
 AUTHORS :
 	$(AM_V_GEN)git log --format='%aN <%aE>' | grep -v 'users.noreply.github.com' | sort | \

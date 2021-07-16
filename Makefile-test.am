@@ -3,7 +3,7 @@
 # Copyright (c) 2018 Fraunhofer SIT sponsored by Infineon Technologies AG
 # All rights reserved.
 
-TESTS_CFLAGS = $(AM_CFLAGS) $(LIBCRYPTO_CFLAGS) -I$(srcdir)/src/tss2-mu \
+TESTS_CFLAGS = $(AM_CFLAGS) $(LIBCRYPTO_CFLAGS) -I$(srcdir)/include -I$(srcdir)/src/tss2-mu \
     -I$(srcdir)/src/tss2-sys -I$(srcdir)/src/tss2-esys  -I$(srcdir)/src/tss2-fapi \
     -Wno-unused-parameter -Wno-missing-field-initializers
 TESTS_LDADD = $(check_LTLIBRARIES) $(lib_LTLIBRARIES) \
@@ -87,6 +87,10 @@ TESTS_UNIT  = \
     test/unit/tctildr-nodl \
     test/unit/tctildr-tcti \
     test/unit/tctildr-getinfo \
+    test/unit/dlopen-fail \
+    test/unit/dlopen-UINT8-marshal \
+    test/unit/dlopen-TPM2B-marshal \
+    test/unit/dlopen-TPMU-marshal \
     test/unit/UINT8-marshal \
     test/unit/UINT16-marshal \
     test/unit/UINT32-marshal \
@@ -98,6 +102,7 @@ TESTS_UNIT  = \
     test/unit/TPMT-marshal \
     test/unit/TPMU-marshal \
     test/unit/sys-execute \
+    test/unit/dlopen_tss2_rc \
     test/unit/tss2_rc
 if ENABLE_TCTI_MSSIM
 TESTS_UNIT += test/unit/tcti-mssim
@@ -184,6 +189,7 @@ ESYS_TESTS_INTEGRATION_DESTRUCTIVE = \
     test/integration/esys-set-algorithm-set.int
 
 ESYS_TESTS_INTEGRATION_MANDATORY = \
+    test/integration/dlopen-esys-get-random.int \
     test/integration/esys-act-set-timeout.int \
     test/integration/esys-certify-creation.int \
     test/integration/esys-certifyX509.int \
@@ -299,6 +305,7 @@ if FAPI
 TESTS_LDADD += $(JSONC_LIBS)
 TESTS_CFLAGS +=  -DTOP_SOURCEDIR"=\"$(top_srcdir)\""
 FAPI_TESTS_INTEGRATION = \
+    test/integration/dlopen-fapi-get-random.fint \
     test/integration/fapi-check-wrong-paths.fint \
     test/integration/fapi-data-crypt.fint \
     test/integration/fapi-data-crypt-persistent.fint \
@@ -502,6 +509,31 @@ test_unit_CopyCommandHeader_LDADD = $(CMOCKA_LIBS) $(libtss2_sys) $(libtss2_mu)
 test_unit_CopyCommandHeader_SOURCES = test/unit/CopyCommandHeader.c \
     src/tss2-sys/sysapi_util.c
 
+test_unit_dlopen_fail_CFLAGS  = $(CMOCKA_CFLAGS) $(TESTS_CFLAGS)
+test_unit_dlopen_fail_LDADD   = $(CMOCKA_LIBS)
+test_unit_dlopen_fail_LDFLAGS = -Wl,--wrap=dlopen,--wrap=dlclose,--wrap=dlsym
+test_unit_dlopen_fail_SOURCES = test/unit/dlopen-fail.c \
+    tss2-dlopen/tss2-dlopen-tctildr.c \
+    tss2-dlopen/tss2-dlopen-rc.c \
+    tss2-dlopen/tss2-dlopen-mu.c \
+    tss2-dlopen/tss2-dlopen-esys.c \
+    tss2-dlopen/tss2-dlopen-fapi.c
+
+test_unit_dlopen_UINT8_marshal_CFLAGS  = $(CMOCKA_CFLAGS) $(TESTS_CFLAGS)
+test_unit_dlopen_UINT8_marshal_LDADD   = $(CMOCKA_LIBS) $(LIBADD_DL) $(libtss2_mu)
+test_unit_dlopen_UINT8_marshal_SOURCES = test/unit/UINT8-marshal.c \
+    tss2-dlopen/tss2-dlopen-mu.c
+
+test_unit_dlopen_TPM2B_marshal_CFLAGS  = $(CMOCKA_CFLAGS) $(TESTS_CFLAGS)
+test_unit_dlopen_TPM2B_marshal_LDADD   = $(CMOCKA_LIBS) $(LIBADD_DL) $(libtss2_mu)
+test_unit_dlopen_TPM2B_marshal_SOURCES = test/unit/TPM2B-marshal.c \
+    tss2-dlopen/tss2-dlopen-mu.c
+
+test_unit_dlopen_TPMU_marshal_CFLAGS  = $(CMOCKA_CFLAGS) $(TESTS_CFLAGS)
+test_unit_dlopen_TPMU_marshal_LDADD   = $(CMOCKA_LIBS) $(LIBADD_DL) $(libtss2_mu)
+test_unit_dlopen_TPMU_marshal_SOURCES = test/unit/TPMU-marshal.c \
+    tss2-dlopen/tss2-dlopen-mu.c
+
 test_unit_UINT8_marshal_CFLAGS  = $(CMOCKA_CFLAGS) $(TESTS_CFLAGS)
 test_unit_UINT8_marshal_LDADD   = $(CMOCKA_LIBS) $(libtss2_mu)
 
@@ -540,6 +572,11 @@ test_unit_sys_execute_SOURCES = test/unit/sys-execute.c \
 test_unit_tss2_rc_CFLAGS  = $(CMOCKA_CFLAGS) $(TESTS_CFLAGS)
 test_unit_tss2_rc_LDADD   = $(CMOCKA_LIBS) $(libtss2_rc) $(libtss2_sys)
 test_unit_tss2_rc_SOURCES = test/unit/test_tss2_rc.c
+
+test_unit_dlopen_tss2_rc_CFLAGS  = $(CMOCKA_CFLAGS) $(TESTS_CFLAGS)
+test_unit_dlopen_tss2_rc_LDADD   = $(CMOCKA_LIBS) $(LIBADD_DL) $(libtss2_rc) $(libtss2_sys)
+test_unit_dlopen_tss2_rc_SOURCES = test/unit/test_tss2_rc.c \
+    tss2-dlopen/tss2-dlopen-rc.c
 
 if ESYS
 test_unit_esys_context_null_CFLAGS = $(CMOCKA_CFLAGS) $(TESTS_CFLAGS) $(TSS2_ESYS_CFLAGS_CRYPTO)
@@ -844,6 +881,17 @@ if ESYS
 ESYS_SRC_UTIL_CRYPTO_SRC = src/tss2-esys/esys_iutil.c \
                            src/tss2-esys/esys_crypto.c \
                            $(TSS2_ESYS_SRC_CRYPTO)
+
+test_integration_dlopen_esys_get_random_int_CFLAGS  = $(TESTS_CFLAGS) \
+    -DENABLE_WARN=1
+test_integration_dlopen_esys_get_random_int_LDADD   = $(TESTS_LDADD) $(LIBADD_DL)
+test_integration_dlopen_esys_get_random_int_LDFLAGS = $(TESTS_LDFLAGS)
+test_integration_dlopen_esys_get_random_int_SOURCES = \
+    test/integration/esys-get-random.int.c \
+    tss2-dlopen/tss2-dlopen-esys.c \
+    tss2-dlopen/tss2-dlopen-mu.c \
+    tss2-dlopen/tss2-dlopen-tctildr.c \
+    test/integration/main-esys.c test/integration/test-esys.h
 
 test_integration_esys_act_set_timeout_int_CFLAGS  = $(TESTS_CFLAGS)
 test_integration_esys_act_set_timeout_int_LDADD   = $(TESTS_LDADD)
@@ -1586,6 +1634,17 @@ test_integration_sys_policy_authorizeNV_int_SOURCES = test/integration/main-sys.
     test/integration/sys-policy-authorizeNV.int.c
 
 if FAPI
+test_integration_dlopen_fapi_get_random_fint_CFLAGS  = $(TESTS_CFLAGS) \
+    -DENABLE_WARN=1
+test_integration_dlopen_fapi_get_random_fint_LDADD   = $(TESTS_LDADD) $(LIBADD_DL)
+test_integration_dlopen_fapi_get_random_fint_LDFLAGS = $(TESTS_LDFLAGS)
+test_integration_dlopen_fapi_get_random_fint_SOURCES = \
+    test/integration/fapi-get-random.int.c \
+    tss2-dlopen/tss2-dlopen-fapi.c \
+    tss2-dlopen/tss2-dlopen-esys.c \
+    tss2-dlopen/tss2-dlopen-mu.c \
+    tss2-dlopen/tss2-dlopen-tctildr.c \
+    test/integration/main-fapi.c test/integration/test-fapi.h
 
 test_integration_fapi_check_wrong_paths_fint_CFLAGS  = $(TESTS_CFLAGS)
 test_integration_fapi_check_wrong_paths_fint_LDADD   = $(TESTS_LDADD)
